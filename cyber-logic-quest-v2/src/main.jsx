@@ -67,8 +67,10 @@ function PlayerFlow({exit}){
  <button className="primary full" onClick={()=>setStage("logic")}><Play/> เริ่ม 10 ด่าน</button></section></main>;
  if(stage==="logic")return <main className="playScreen"><Hud qi={qi} score={score} combo={combo}/>
  <section className="glass gameCard"><div className={"gateTag "+q.op.toLowerCase()}>{q.op} GATE</div><h2>MISSION {qi+1}/10</h2>
- <div className="verticalGate"><Node title="INPUT A" value={q.a}/><div className="flow">↓</div><div className={"gate "+q.op.toLowerCase()}>{q.op}</div><div className="flow">↑</div><Node title="INPUT B" value={q.b}/><div className="flow pulse">↓ OUTPUT</div></div>
- <BitPicker bits={bits} setBits={setBits}/>
+ <div className="logicWorkspace">
+   <GateRule op={q.op}/>
+   <BitTable a={q.a} b={q.b} bits={bits} setBits={setBits}/>
+  </div>
  {!msg?<button className="primary full" onClick={submit}>⚡ EXECUTE</button>:<div className={msg==="ถูกต้อง!"?"ok feedback":"bad feedback"}><b>{msg}</b><button onClick={next}>NEXT →</button></div>}
  </section></main>;
  if(stage==="ascii")return <main className="playScreen"><section className="glass gameCard centerText">
@@ -76,10 +78,16 @@ function PlayerFlow({exit}){
   <p>{ascii===0?p1:p2} = ENCODER • {ascii===0?p2:p1} = DECODER</p>
   {asciiStep===1&&<>
    <div className="asciiStepTitle">STEP 1 — ถอดรหัสด้วย XOR</div>
-   <div className="cipher"><span>ENCRYPTED DATA</span><b>{asciiData.cipher}</b><i>XOR</i><span>SECRET KEY</span><b>{asciiData.key}</b></div>
-   <p className="help">💡 XOR : เหมือนกัน = 0 • ต่างกัน = 1</p>
-   <div className="outputLabel">OUTPUT — แตะตัวเลขเพื่อเปลี่ยน 0 ↔ 1</div>
-   <div className="bits asciiBits">{asciiBits.map((bit,index)=><button key={index} onClick={()=>toggleAsciiBit(index)}>{bit}</button>)}</div>
+   <div className="asciiXorWorkspace">
+    <GateRule op="XOR"/>
+    <BitTable
+     a={asciiData.cipher}
+     b={asciiData.key}
+     bits={asciiBits}
+     setBits={setAsciiBits}
+     labels={{a:"ENCRYPTED",b:"SECRET KEY",output:"OUTPUT"}}
+    />
+   </div>
    {msg&&<div className="badText">{msg}</div>}
    <button className="primary full" onClick={checkAsciiXor}>⚡ CHECK XOR</button>
   </>}
@@ -108,6 +116,19 @@ function Host(){
 function Input({label,v,s}){return <label className="input"><span>{label}</span><input value={v} onChange={e=>s(e.target.value)} placeholder={label}/></label>}
 function Hud({qi,score,combo}){return <><div className="hud"><span>MISSION <b>{qi+1}/10</b></span><span>SCORE <b>{score}</b></span><span>🔥 ×{combo}</span></div><div className="bar"><i style={{width:(qi+1)*10+"%"}}/></div></>}
 function GateRule({op}){const rules={AND:{short:"ทั้งคู่เป็น 1 → 1",rows:["0 AND 0 = 0","0 AND 1 = 0","1 AND 0 = 0","1 AND 1 = 1"]},OR:{short:"มีอย่างน้อยหนึ่ง 1 → 1",rows:["0 OR 0 = 0","0 OR 1 = 1","1 OR 0 = 1","1 OR 1 = 1"]},XOR:{short:"ต่างกัน → 1 • เหมือนกัน → 0",rows:["0 XOR 0 = 0","0 XOR 1 = 1","1 XOR 0 = 1","1 XOR 1 = 0"]}};const r=rules[op];return <aside className={"gateRule "+op.toLowerCase()}><div className="gateRuleTitle">{op} RULE</div><strong>{r.short}</strong><div className="ruleRows">{r.rows.map(x=><span key={x}>{x}</span>)}</div></aside>}
-function BitTable({a,b,bits,setBits}){const width=Math.max(a.length,b.length,bits.length);const pad=v=>v.padStart(width,"0").split("");return <div className="bitTableWrap"><div className="bitHint">แตะตัวเลขแถว OUTPUT เพื่อเปลี่ยน 0 ↔ 1</div><div className="bitTable" style={{"--bit-count":width}}><div className="bitRow bitIndex"><span>BIT</span>{Array.from({length:width},(_,i)=><b key={i}>{width-1-i}</b>)}</div><div className="bitRow"><span>INPUT A</span>{pad(a).map((v,i)=><b key={i}>{v}</b>)}</div><div className="bitRow"><span>INPUT B</span>{pad(b).map((v,i)=><b key={i}>{v}</b>)}</div><div className="bitRow outputRow"><span>OUTPUT</span>{bits.map((v,i)=><button key={i} onClick={()=>setBits(x=>x.map((bit,j)=>j===i?(bit==="0"?"1":"0"):bit))}>{v}</button>)}</div></div></div>}
+function BitTable({a,b,bits,setBits,labels={a:"INPUT A",b:"INPUT B",output:"OUTPUT"}}){
+ const width=Math.max(a.length,b.length,bits.length);
+ const pad=v=>v.padStart(width,"0").split("");
+ const toggle=index=>setBits(current=>current.map((bit,i)=>i===index?(bit==="0"?"1":"0"):bit));
+ return <div className="bitTableWrap">
+  <div className="bitHint">แตะตัวเลขแถว {labels.output} เพื่อเปลี่ยน 0 ↔ 1</div>
+  <div className="bitTable" style={{"--bit-count":width}}>
+   <div className="bitRow bitIndex"><span>BIT</span>{Array.from({length:width},(_,i)=><b key={i}>{width-1-i}</b>)}</div>
+   <div className="bitRow"><span>{labels.a}</span>{pad(a).map((v,i)=><b key={i}>{v}</b>)}</div>
+   <div className="bitRow"><span>{labels.b}</span>{pad(b).map((v,i)=><b key={i}>{v}</b>)}</div>
+   <div className="bitRow outputRow"><span>{labels.output}</span>{bits.map((v,i)=><button key={i} onClick={()=>toggle(i)}>{v}</button>)}</div>
+  </div>
+ </div>
+}
 function Bg(){return <div className="bg"><div className="grid"/><div className="glow"/></div>}
 createRoot(document.getElementById("root")).render(<App/>);

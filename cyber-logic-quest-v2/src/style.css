@@ -11,3 +11,36 @@
 .logicWorkspace{display:grid;grid-template-columns:minmax(0,1fr) 190px;grid-template-areas:"table rule";gap:18px;align-items:start;margin:6px auto 18px;text-align:left}.bitTableWrap{grid-area:table;min-width:0}.bitHint{text-align:center;color:#7fc9d8;font-size:11px;margin:0 0 9px}.bitTable{width:100%;overflow:hidden;border:1px solid #1cb8d8;border-radius:13px;background:#020b14}.bitRow{display:grid;grid-template-columns:78px repeat(var(--bit-count),minmax(36px,1fr))}.bitRow+.bitRow{border-top:1px solid #174b60}.bitRow>span{display:flex;align-items:center;padding:0 9px;color:#79b7c7;font-size:10px;font-weight:700;border-right:1px solid #174b60;background:#061725}.bitRow>b,.bitRow>button{min-width:0;min-height:62px;display:grid;place-items:center;border:0;border-right:1px solid #123c4e;background:#020c16;color:#f1fdff;font:800 clamp(24px,3.5vw,34px)/1 Orbitron}.bitIndex>b{min-height:30px;color:#5e93a3;background:#04111c;font:600 9px Orbitron}.outputRow>span{color:#61f0ff;background:#083044}.outputRow>button{cursor:pointer;background:linear-gradient(180deg,#08314a,#061522);color:#fff;touch-action:manipulation}.outputRow>button:active{transform:scale(.9);background:#0b5873}.gateRule{grid-area:rule;border:1px solid #2d7186;border-radius:12px;padding:14px;background:linear-gradient(145deg,#071927,#030d17)}.gateRuleTitle{font:800 14px Orbitron;margin-bottom:9px}.gateRule strong{display:block;font-size:12px;line-height:1.45;margin-bottom:11px}.gateRule.and .gateRuleTitle{color:#ffd35c}.gateRule.or .gateRuleTitle{color:#4ceaff}.gateRule.xor .gateRuleTitle{color:#aa8aff}.ruleRows{display:grid;gap:5px}.ruleRows span{padding:6px 7px;border:1px solid #174354;border-radius:6px;background:#020b14;color:#a8c9d3;font:600 9px Orbitron;white-space:nowrap}
 @media(max-width:700px){.logicWorkspace{grid-template-columns:1fr;grid-template-areas:"rule" "table";gap:12px}.ruleRows{grid-template-columns:repeat(2,1fr)}.ruleRows span{text-align:center}}
 @media(max-width:480px){.playScreen{padding:10px 8px}.bitRow{grid-template-columns:62px repeat(var(--bit-count),minmax(0,1fr))}.bitRow>span{padding:0 5px;font-size:9px}.bitRow>b,.bitRow>button{min-height:54px;font-size:clamp(20px,7vw,29px)}.bitIndex>b{min-height:26px;font-size:8px}.ruleRows span{padding:5px 3px;font-size:8px}}
+
+
+/* XOR ASCII — reuse the same aligned bit table */
+.asciiXorWorkspace{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 190px;
+  grid-template-areas:"table rule";
+  gap:18px;
+  align-items:start;
+  margin:22px auto 18px;
+  text-align:left;
+}
+.asciiXorWorkspace .bitTableWrap{grid-area:table}
+.asciiXorWorkspace .gateRule{grid-area:rule}
+.asciiXorWorkspace .bitRow{grid-template-columns:92px repeat(var(--bit-count),minmax(36px,1fr))}
+.asciiXorWorkspace .bitRow>span{font-size:9px;white-space:nowrap}
+
+@media(max-width:700px){
+  .asciiXorWorkspace{
+    grid-template-columns:1fr;
+    grid-template-areas:"rule" "table";
+    gap:12px;
+  }
+}
+@media(max-width:480px){
+  .asciiXorWorkspace .bitRow{
+    grid-template-columns:72px repeat(var(--bit-count),minmax(0,1fr));
+  }
+  .asciiXorWorkspace .bitRow>span{
+    padding:0 4px;
+    font-size:7px;
+  }
+}
