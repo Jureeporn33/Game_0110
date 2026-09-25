@@ -24,9 +24,9 @@ function App(){
 function Header({go}){return <header><button className="logo" onClick={go}><Shield/> CYBER LOGIC QUEST</button><span><Radio size={14}/> MOBILE TRAINING</span></header>}
 function HomeScreen({setMode}){return <main className="home">
  <section className="glass hero"><div className="kicker">20-MINUTE CYBER BASE • PAIR MODE</div><h1>คิดเป็นบิต<br/><em>พิชิตรหัสลับ</em></h1>
- <p>AND • OR • XOR • ASCII — ออกแบบสำหรับนักเรียนจับคู่เล่นบนมือถือและ iPad</p>
+ <p>AND • OR • XOR • ASCII </p>
  <div className="homeBtns"><button className="primary" onClick={()=>setMode("play")}><Play/> เข้าเล่นเกม</button><button className="secondary" onClick={()=>setMode("host")}><Trophy/> Host / คะแนน</button></div>
- <div className="facts"><span><Users/> 5–6 คู่ / รอบ</span><span><MonitorSmartphone/> Mobile First</span><span>⏱ 20 นาที</span></div></section>
+ </section>
  </main>}
 function PlayerFlow({exit}){
  const [stage,setStage]=useState("join"),[p1,setP1]=useState(""),[p2,setP2]=useState(""),[round,setRound]=useState("1"),[pair,setPair]=useState("");
